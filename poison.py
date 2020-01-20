@@ -6,8 +6,12 @@ from random import choice
 
 import homoglyphs as hg
 
-res = []
+verbose = False
 classes = 'LATIN', 'CYRILLIC','GREEK', 'COPTIC'
+
+if '-v' in sys.argv:
+    verbose=True
+    del sys.argv[sys.argv.index('-v')]
 
 if '-c' in sys.argv:
     idx = sys.argv.index('-c')
@@ -16,12 +20,17 @@ if '-c' in sys.argv:
     del sys.argv[idx]
     classes = classes.upper().split(',')
 
+if len(sys.argv)<2:
+    print("usage: %s [-c <latin,cyrillic,coptic,greek,...>] string" % sys.argv[0])
+    sys.exit(0)
+
 homoglyphs = hg.Homoglyphs(categories=(classes))
 
 total = 1
+res = []
 for a in ' '.join(sys.argv[1:]):
     c = homoglyphs.get_combinations(a) or [a]
     total*=len(c)
     res.append(choice(c))
 print(''.join(res))
-print("total combinations:", total)
+if verbose: print("total combinations:", total)
